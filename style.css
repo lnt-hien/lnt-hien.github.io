@@ -10,6 +10,7 @@ body
     background-color: #ffeff5;
 }
 
+/* bottom-right */
 #app-cover
 {
     position: absolute;
@@ -20,6 +21,7 @@ body
     margin: 0 50px 80px 0;
 }
 
+/* center */
 /* #app-cover
 {
     position: absolute;
@@ -135,14 +137,14 @@ body
     background-color: transparent;
 }
 
-#s-area, #seek-bar
+#progress-bar, #seek-bar
 {
     position: relative;
     height: 4px;
     border-radius: 4px;
 }
 
-#s-area
+#progress-bar
 {
     background-color:#ffe8ee;
     cursor: pointer;
