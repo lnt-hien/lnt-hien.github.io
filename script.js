@@ -6,16 +6,16 @@ $(function()
 	var albumName = $('#album-name');
 	var trackName = $('#track-name');
 	var albumArt = $('#album-art'),
-		sArea = $('#s-area'),
+		progressBar = $('#progress-bar'),
 		seekBar = $('#seek-bar'),
 		trackTime = $('#track-time'),
 		insTime = $('#ins-time'),
 		sHover = $('#s-hover'),
 		playPauseButton = $("#play-pause-button"),
 		i = playPauseButton.find('i'),
-		tProgress = $('#current-time'),
-		tTime = $('#track-length'),
-		seekT, seekLoc, seekBarPos, cM, ctMinutes, ctSeconds, curMinutes, curSeconds, durMinutes, durSeconds, playProgress, bTime, nTime = 0,
+		currTrackTime = $('#current-time'),
+		durTrackTime = $('#track-length'),
+		seekLocation, seekTime, progressBarPos, cM, ctMinutes, ctSeconds, curMinutes, curSeconds, durMinutes, durSeconds, playProgress, bTime, nTime = 0,
 		buffInterval = null, tFlag = false;
 	
 	var playPreviousTrackButton = $('#play-previous'), playNextTrackButton = $('#play-next'), currIndex = -1;
@@ -41,7 +41,7 @@ $(function()
 
     function playPause()
     {
-        setTimeout(function()
+        setTimeout(function() 
         {
             if(audio.paused)
             {
@@ -66,35 +66,31 @@ $(function()
     	
 	function showHover(event)
 	{
-		seekBarPos = sArea.offset(); 
-		seekT = event.clientX - seekBarPos.left;
-		seekLoc = audio.duration * (seekT / sArea.outerWidth());
+		progressBarPos = progressBar.offset(); 
+		seekLocation = event.clientX - progressBarPos.left;
+		seekTime = audio.duration * (seekLocation / progressBar.outerWidth());
 		
-		sHover.width(seekT);
+		sHover.width(seekLocation);
 		
-		cM = seekLoc / 60;
+		cM = seekTime / 60;
 		
 		ctMinutes = Math.floor(cM);
-		ctSeconds = Math.floor(seekLoc - ctMinutes * 60);
+		ctSeconds = Math.floor(seekTime - ctMinutes * 60);
 		
 		if( (ctMinutes < 0) || (ctSeconds < 0) )
 			return;
 		
-        if( (ctMinutes < 0) || (ctSeconds < 0) )
-			return;
-		
 		if(ctMinutes < 10)
-			ctMinutes = '0'+ctMinutes;
+			ctMinutes = '0' + ctMinutes;
 		if(ctSeconds < 10)
-			ctSeconds = '0'+ctSeconds;
+			ctSeconds = '0' + ctSeconds;
         
         if( isNaN(ctMinutes) || isNaN(ctSeconds) )
             insTime.text('--:--');
         else
-		    insTime.text(ctMinutes+':'+ctSeconds);
+		    insTime.text(ctMinutes + ':' + ctSeconds);
             
-		insTime.css({'left':seekT,'margin-left':'-21px'}).fadeIn(0);
-		
+		insTime.css({'left':seekLocation,'margin-left':'0px'}).fadeIn(0);
 	}
 
     function hideHover()
@@ -105,8 +101,8 @@ $(function()
     
     function playFromClickedPos()
     {
-        audio.currentTime = seekLoc;
-		seekBar.width(seekT);
+        audio.currentTime = seekTime;
+		seekBar.width(seekLocation);
 		hideHover();
     }
 
@@ -130,24 +126,24 @@ $(function()
 		playProgress = (audio.currentTime / audio.duration) * 100;
 		
 		if(curMinutes < 10)
-			curMinutes = '0'+curMinutes;
+			curMinutes = '0' + curMinutes;
 		if(curSeconds < 10)
-			curSeconds = '0'+curSeconds;
+			curSeconds = '0' + curSeconds;
 		
 		if(durMinutes < 10)
-			durMinutes = '0'+durMinutes;
+			durMinutes = '0' + durMinutes;
 		if(durSeconds < 10)
-			durSeconds = '0'+durSeconds;
+			durSeconds = '0' + durSeconds;
         
         if( isNaN(curMinutes) || isNaN(curSeconds) )
-            tProgress.text('00:00');
+            currTrackTime.text('00:00');
         else
-		    tProgress.text(curMinutes+':'+curSeconds);
+		    currTrackTime.text(curMinutes + ':' + curSeconds);
         
         if( isNaN(durMinutes) || isNaN(durSeconds) )
-            tTime.text('00:00');
+            durTrackTime.text('00:00');
         else
-		    tTime.text(durMinutes+':'+durSeconds);
+		    durTrackTime.text(durMinutes + ':' + durSeconds);
         
         if( isNaN(curMinutes) || isNaN(curSeconds) || isNaN(durMinutes) || isNaN(durSeconds) )
             trackTime.removeClass('active');
@@ -161,7 +157,7 @@ $(function()
 		{
 			i.attr('class','fa fa-play');
 			seekBar.width(0);
-            tProgress.text('00:00');
+            currTrackTime.text('00:00');
             albumArt.removeClass('buffering').removeClass('active');
             clearInterval(buffInterval);
 			selectTrack(1);
@@ -203,8 +199,8 @@ $(function()
 
             seekBar.width(0);
             trackTime.removeClass('active');
-            tProgress.text('00:00');
-            tTime.text('00:00');
+            currTrackTime.text('00:00');
+            durTrackTime.text('00:00');
 			
 			currAlbum = songs[currIndex].name;
             currTrackName = songs[currIndex].artist;
@@ -249,11 +245,11 @@ $(function()
 		
 		playPauseButton.on('click',playPause);
 		
-		sArea.mousemove(function(event){ showHover(event); });
+		progressBar.mousemove(function(event){ showHover(event); });
 		
-        sArea.mouseout(hideHover);
+        progressBar.mouseout(hideHover);
         
-        sArea.on('click',playFromClickedPos);
+        progressBar.on('click',playFromClickedPos);
 		
         $(audio).on('timeupdate',updateCurrTime);
 
