@@ -16,7 +16,7 @@ body
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 430px;
+    width: 600px;
     height: 100px;
     margin: 0 50px 80px 0;
 }
@@ -321,18 +321,18 @@ body
 
 #player-controls
 {
-    width: 250px;
+    width: 400px;
     height: 100%;
-    margin: 0 5px 0 141px;
+    margin: 0 15px 0 141px;
     float: right;
     overflow: hidden;
 }
 
 .control
 {
-    width: 33.333%;
+    width: 20%;
     float: left;
-    padding: 12px 0;
+    padding: 12px 0px 12px 0px;
 }
 
 .button
@@ -368,4 +368,9 @@ body
 .button:hover i
 {
     color: #fff;
+}
+
+#shuffle.active
+{
+    background-color: #d6d6de;
 }

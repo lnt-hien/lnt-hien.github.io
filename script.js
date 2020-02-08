@@ -11,33 +11,103 @@ $(function()
 		trackTime = $('#track-time'),
 		insTime = $('#ins-time'),
 		sHover = $('#s-hover'),
-		playPauseButton = $("#play-pause-button"),
-		i = playPauseButton.find('i'),
 		currTrackTime = $('#current-time'),
 		durTrackTime = $('#track-length'),
 		seekLocation, seekTime, progressBarPos, cM, ctMinutes, ctSeconds, curMinutes, curSeconds, durMinutes, durSeconds, playProgress, bTime, nTime = 0,
-		buffInterval = null, tFlag = false;
+		buffInterval = null, tFlag = false, isShuffled = false;
 	
-	var playPreviousTrackButton = $('#play-previous'), playNextTrackButton = $('#play-next'), currIndex = -1;
+    var playPauseButton = $("#play-pause-button"), 
+        i = playPauseButton.find('i'),
+        playPreviousTrackButton = $('#play-previous'), 
+        playNextTrackButton = $('#play-next'),
+        shuffleButton = $('#shuffle') 
+        currIndex = -1;
 	
-	var songs = [{
-		artist: "Dig Didzay",
-		name: "Nếu Anh Đi (Cover)",
-		url: "Musics/NeuAnhDi.mp3",
-		picture: "https://raw.githubusercontent.com/himalayasingh/music-player-1/master/img/_1.jpg"
-	}];
-	
-	function shuffle(a) {
-		var j, x, i;
-		for (i = a.length - 1; i > 0; i--) {
-			j = Math.floor(Math.random() * (i + 1));
-			x = a[i];
-			a[i] = a[j];
-			a[j] = x;
-		}
-		return a;
-	}
-	songs = shuffle(songs);
+	var songList = [{
+            artist: "Dig Didzay",
+            name: "Nếu Anh Đi (Cover)",
+            url: "Musics/NeuAnhDi.mp3",
+            picture: "https://raw.githubusercontent.com/himalayasingh/music-player-1/master/img/_1.jpg"
+        },
+        {
+            artist: "Michael Pangilinan",
+            name: "Rainbow (Cover)",
+            url: "Musics/Rainbow.mp3",
+            picture: "https://raw.githubusercontent.com/himalayasingh/music-player-1/master/img/_1.jpg"
+        },
+        {
+            artist: "Tori Kelly",
+            name: "Beautiful Things",
+            url: "Musics/BeautifulThings.mp3",
+            picture: "https://raw.githubusercontent.com/himalayasingh/music-player-1/master/img/_1.jpg"
+        },
+        {
+            artist: "Calum Scott",
+            name: "You Are The Reason",
+            url: "Musics/YouAreTheReason.mp3",
+            picture: "https://raw.githubusercontent.com/himalayasingh/music-player-1/master/img/_1.jpg"
+        }
+        ];
+
+    function shuffle() 
+    {
+        if(isShuffled) 
+        {
+            var j, x, i;
+
+            var shuffledSongs = JSON.parse(JSON.stringify(songList));  /*Cloning songList obj*/
+            
+            for (i = shuffledSongs.length - 1; i > 0; i--) 
+            {
+                j = Math.floor(Math.random() * (i + 1));
+                if( i == currIndex )
+                {
+                    x = shuffledSongs[currIndex];
+                    shuffledSongs[currIndex] = shuffledSongs[j];
+                    shuffledSongs[j] = x;
+                    
+                    k = currIndex;
+                    currIndex = j;
+                    j = k;
+                    console.log(currIndex);
+                }
+                else if( j == currIndex )
+                {
+                    x = shuffledSongs[i];
+                    shuffledSongs[i] = shuffledSongs[currIndex];
+                    shuffledSongs[currIndex] = x;
+                    
+                    k = i;
+                    i = currIndex;
+                    currIndex = k;
+                    console.log(currIndex);
+                }
+                else
+                {
+                    x = shuffledSongs[i];
+                    shuffledSongs[i] = shuffledSongs[j];
+                    shuffledSongs[j] = x;
+                    console.log(currIndex);
+                }
+            }
+
+            shuffleButton.addClass('active');
+            isShuffled = false;
+            playedSongs = shuffledSongs;
+            console.log(playedSongs);
+        }
+        else
+        {
+            shuffleButton.removeClass('active');
+            isShuffled = true;
+            playedSongs = songList;
+            console.log(playedSongs);
+        }
+
+        return playedSongs;
+    }
+    
+    // playedSongs = shuffle();
 
     function playPause()
     {
@@ -187,7 +257,7 @@ $(function()
         else
             --currIndex;
 
-        if( (currIndex > -1) && (currIndex < songs.length) )
+        if( (currIndex > -1) && (currIndex < playedSongs.length) )
         {
             if( flag == 0 )
                 i.attr('class','fa fa-play');
@@ -202,11 +272,11 @@ $(function()
             currTrackTime.text('00:00');
             durTrackTime.text('00:00');
 			
-			currAlbum = songs[currIndex].name;
-            currTrackName = songs[currIndex].artist;
-            currArtwork = songs[currIndex].picture;
+			currAlbum = playedSongs[currIndex].name;
+            currTrackName = playedSongs[currIndex].artist;
+            currArtwork = playedSongs[currIndex].picture;
 
-            audio.src = songs[currIndex].url;
+            audio.src = playedSongs[currIndex].url;
             
             nTime = 0;
             bTime = new Date();
@@ -254,8 +324,11 @@ $(function()
         $(audio).on('timeupdate',updateCurrTime);
 
         playPreviousTrackButton.on('click',function(){ selectTrack(-1);} );
-        playNextTrackButton.on('click',function(){ selectTrack(1);});
+        playNextTrackButton.on('click',function(){ selectTrack(1);} );
+        // shuffleButton.on('click',function(){ playedSongs = shuffle();} );
 	}
     
-	initPlayer();
+    playedSongs = shuffle();
+    initPlayer();
+    shuffleButton.on('click',function(){ playedSongs = shuffle();} );
 });
