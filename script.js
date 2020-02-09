@@ -60,6 +60,7 @@ $(function()
             for (i = shuffledSongs.length - 1; i > 0; i--) 
             {
                 j = Math.floor(Math.random() * (i + 1));
+
                 if( i == currIndex )
                 {
                     x = shuffledSongs[currIndex];
@@ -69,7 +70,6 @@ $(function()
                     k = currIndex;
                     currIndex = j;
                     j = k;
-                    console.log(currIndex);
                 }
                 else if( j == currIndex )
                 {
@@ -80,14 +80,12 @@ $(function()
                     k = i;
                     i = currIndex;
                     currIndex = k;
-                    console.log(currIndex);
                 }
                 else
                 {
                     x = shuffledSongs[i];
                     shuffledSongs[i] = shuffledSongs[j];
                     shuffledSongs[j] = x;
-                    console.log(currIndex);
                 }
             }
 
@@ -325,7 +323,6 @@ $(function()
 
         playPreviousTrackButton.on('click',function(){ selectTrack(-1);} );
         playNextTrackButton.on('click',function(){ selectTrack(1);} );
-        // shuffleButton.on('click',function(){ playedSongs = shuffle();} );
 	}
     
     playedSongs = shuffle();
