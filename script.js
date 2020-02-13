@@ -16,12 +16,16 @@ $(function()
 		seekLocation, seekTime, progressBarPos, cM, ctMinutes, ctSeconds, curMinutes, curSeconds, durMinutes, durSeconds, playProgress, bTime, nTime = 0,
 		buffInterval = null, tFlag = false, isShuffled = false;
 	
-    var playPauseButton = $("#play-pause-button"), 
+    var playPauseButton = $("#play-pause"), 
         i = playPauseButton.find('i'),
         playPreviousTrackButton = $('#play-previous'), 
         playNextTrackButton = $('#play-next'),
-        shuffleButton = $('#shuffle') 
-        currIndex = -1;
+        shuffleButton = $('#shuffle'), 
+        repeatButton = $('#repeat'),
+        currIndex = -1,
+        isRepeatedOnce = false, 
+        isRepeatedAll = false;
+
 	
 	var songList = [{
             artist: "Dig Didzay",
@@ -49,18 +53,15 @@ $(function()
         }
         ];
 
-    function() {
-        // process bar
-        setTimeout(function() {
-            firstQuestion();
+    function spinLoad()
+    {
+    setTimeout(function() {
             $('.spinner').fadeOut();
-            $('#preloader').delay(350).fadeOut('slow');
-            $('body').delay(350).css({
-                'overflow': 'visible'
-            });
-        }, 600);
-    })
+            $('#preloader').delay(500).fadeOut('slow');
+        }, 1000);
+    }
 
+    spinLoad();
 
     function shuffle() 
     {
@@ -143,7 +144,6 @@ $(function()
             }
         },300);
     }
-
     	
 	function showHover(event)
 	{
@@ -241,7 +241,19 @@ $(function()
             currTrackTime.text('00:00');
             albumArt.removeClass('buffering').removeClass('active');
             clearInterval(buffInterval);
-			selectTrack(1);
+            if( !isRepeatedAll && !isRepeatedOnce )    
+                selectTrack(1);
+            else if ( isRepeatedOnce )
+            {
+                --currIndex;
+                selectTrack(1);
+                isRepeatedOnce = false;
+                isRepeatedAll = true;
+                repeatButton.removeClass('active');
+            }
+            else
+                --currIndex; 
+                selectTrack(1);
 		}
     }
     
@@ -316,6 +328,30 @@ $(function()
         }
     }
 
+    function repeat()
+    {   
+        if( !isRepeatedOnce )
+        {
+            repeatButton.addClass('active');
+            repeatButton.html('<i class="material-icons">repeat_one</i>');
+            
+            isRepeatedOnce = true;
+        }
+        else if( !isRepeatedAll )
+        {
+            repeatButton.html('<i class="material-icons">repeat</i>');
+            
+            isRepeatedOnce = false;
+            isRepeatedAll = true;
+        }
+        else
+        {
+            repeatButton.removeClass('active');
+
+            isRepeatedAll = false;
+        }
+    }
+
     function initPlayer()
 	{	
         audio = new Audio();
@@ -324,21 +360,22 @@ $(function()
 		
 		audio.loop = false;
 		
-		playPauseButton.on('click',playPause);
+		playPauseButton.on('click', playPause);
 		
 		progressBar.mousemove(function(event){ showHover(event); });
 		
         progressBar.mouseout(hideHover);
         
-        progressBar.on('click',playFromClickedPos);
+        progressBar.on('click', playFromClickedPos);
 		
-        $(audio).on('timeupdate',updateCurrTime);
+        $(audio).on('timeupdate', updateCurrTime);
 
-        playPreviousTrackButton.on('click',function(){ selectTrack(-1);} );
-        playNextTrackButton.on('click',function(){ selectTrack(1);} );
+        playPreviousTrackButton.on('click', function(){ selectTrack(-1); });
+        playNextTrackButton.on('click', function(){ selectTrack(1); });
+        repeatButton.on('click', repeat);
 	}
     
     playedSongs = shuffle();
     initPlayer();
-    shuffleButton.on('click',function(){ playedSongs = shuffle();} );
+    shuffleButton.on('click', function(){ playedSongs = shuffle(); });
 });

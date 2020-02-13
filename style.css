@@ -370,7 +370,7 @@ body
     color: #fff;
 }
 
-#shuffle.active
+#shuffle.active, #repeat.active
 {
     background-color: #d6d6de;
 }
