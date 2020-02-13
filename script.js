@@ -28,9 +28,9 @@ $(function()
 
 	
 	var songList = [{
-            artist: "Dig Didzay",
-            name: "Nếu Anh Đi (Cover)",
-            url: "Musics/NeuAnhDi.mp3",
+            artist: "Us The Duo",
+            name: "No Matter Where You Are",
+            url: "Musics/NoMatterWhereYouAre.mp3",
             picture: "https://raw.githubusercontent.com/himalayasingh/music-player-1/master/img/_1.jpg"
         },
         {
